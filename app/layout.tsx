@@ -37,9 +37,7 @@ export default function RootLayout({
           disableTransitionOnChange>
           <div className="container mx-auto flex h-screen flex-col justify-center">
             <header className="flex justify-between border-b-1">
-              <Link
-                href="/"
-                className="flex items-center font-semibold text-3xl text-pink-300 tracking-tight">
+              <Link href="/" className="logo-bookmark flex items-center">
                 <BookMarkedIcon /> BookMark
               </Link>
               <Nav />
