@@ -1,24 +1,36 @@
 "use client";
 
-import { MoonIcon, SunIcon } from "lucide-react";
+import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useReducer, useState } from "react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+
+const THEMES = ["light", "system", "dark"] as const;
+const THEME_ICONS = {
+  light: <MonitorIcon />,
+  system: <MoonIcon />,
+  dark: <SunIcon />,
+};
 
 export default function ThemeChanger() {
-  const [isDarkmode, toggleTheme] = useReducer((pre) => !pre, false);
-
+  const { theme, setTheme } = useTheme();
   const [mount, setMount] = useState(false);
 
   useEffect(() => {
     setMount(true);
   }, []);
 
-  if (!mount) return <button></button>;
+  if (!mount || !theme) return <button></button>;
+
+  const changeTheme = () => {
+    const idx = THEMES.indexOf(theme as keyof typeof THEME_ICONS) + 1;
+    setTheme(THEMES[idx % THEMES.length]);
+  };
   return (
     <div>
       <Link href="/bookcase" className="btn-icon">
-        <button onClick={toggleTheme} className="btn-icon">
-          {isDarkmode ? <SunIcon /> : <MoonIcon />}
+        <button onClick={changeTheme} className="btn-icon">
+          {THEME_ICONS[theme as keyof typeof THEME_ICONS]}
         </button>
       </Link>
     </div>
