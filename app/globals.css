@@ -126,6 +126,10 @@
 
 @layer components {
   .text-btn {
-    @apply font-semibold text-pink-300 hover:text-red-500;
+    @apply font-semibold text-sky-400 hover:text-pink-500;
+  }
+
+  .btn-icon {
+    @apply rounded-full border-0 p-1 hover:ring-0 active:scale-75 [&>svg:hover]:stroke-pink-500 [&>svg]:stroke-sky-400;
   }
 }
