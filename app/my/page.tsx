@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { signOut } from "@/lib/auth";
 
 export default function My() {
   return (
@@ -10,7 +13,9 @@ export default function My() {
           <Link className={"text-btn"} href="/api/auth/signout">
             Go to SignOut
           </Link>
-          <Button variant={"info"}>Sign Out</Button>
+          <Button onClick={async () => await signOut()} variant={"info"}>
+            Sign Out
+          </Button>
         </div>
       </div>
     </div>

@@ -7,7 +7,7 @@ import { auth } from "@/lib/auth";
 export default function Nav() {
   const session = use(auth());
   const didLogin = !!session?.user;
-  console.log("💻 ~ session:", session);
+  // console.log("💻 ~ session:", session);
   return (
     <div className="flex items-center gap-5">
       <Link href={"/bookcase"} className="btn-icon">
