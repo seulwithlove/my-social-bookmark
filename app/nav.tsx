@@ -19,7 +19,7 @@ export default function Nav() {
           {session.user?.name}
         </Link>
       ) : (
-        <Link href="/sign" className={"text-btn"}>
+        <Link href="/api/auth/signin" className={"text-btn"}>
           Login
         </Link>
       )}
