@@ -10,7 +10,55 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
-  providers: [Google, Github, Kakao, Naver, Credentials],
+  providers: [
+    Google,
+    Github,
+    Kakao,
+    Naver,
+    Credentials({
+      // TODO: csrf
+      credentials: {
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "email@bookmark.com",
+        },
+        password: {
+          label: "Password",
+          type: "password",
+          placeholder: "password",
+        },
+      },
+      async authorize(credentials) {
+        console.log("credentials>>", credentials);
+        return null;
+      },
+    }),
+  ], // TODO: GET / POST
+  callbacks: {
+    async signIn({ user, profile }) {
+      return true;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.name = user.name;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+      }
+      return session;
+    },
+  },
+  trustHost: true, // TODO: crs 문제 해결?
+  jwt: { maxAge: 30 * 60 }, // 30mins
+  pages: {
+    signIn: "/sign",
+    error: "sign/error", // http://localhost:3000/api/auth/signin?error=CredentialsSignin&code=credentials
+  },
   session: {
     strategy: "jwt",
   },
