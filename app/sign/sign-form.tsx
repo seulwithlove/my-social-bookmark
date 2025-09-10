@@ -6,7 +6,7 @@ import LabelInput from "@/components/label-input";
 import { Button } from "@/components/ui/button";
 
 export default function SignForm() {
-  const [isSignin, toggleSign] = useReducer((pre) => !pre, false);
+  const [isSignin, toggleSign] = useReducer((pre) => !pre, true);
   return (
     <>
       {isSignin ? (
@@ -26,6 +26,7 @@ function SignIn({ toggleSign }: { toggleSign: () => void }) {
           label="email"
           type="email"
           name="email"
+          defaultValue={"anfrhrl0313@naver.com"}
           placeholder="email@bookmark.com"
         />
 
@@ -33,6 +34,7 @@ function SignIn({ toggleSign }: { toggleSign: () => void }) {
           label="password"
           type="password"
           name="password"
+          defaultValue={""}
           placeholder="password"
         />
         <div className="flex justify-between">
