@@ -15,7 +15,7 @@ export default function Nav() {
       <ThemeChanger />
       {didLogin ? (
         <Link href="/my" className={"text-btn"}>
-          My {session.user?.name}
+          {session.user?.name}
         </Link>
       ) : (
         <Link href="/sign" className={"text-btn"}>
