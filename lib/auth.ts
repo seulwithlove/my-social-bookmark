@@ -4,6 +4,7 @@ import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Kakao from "next-auth/providers/kakao";
 import Naver from "next-auth/providers/naver";
+
 export const {
   handlers: { GET, POST },
   auth,
@@ -18,16 +19,8 @@ export const {
     Credentials({
       // TODO: csrf
       credentials: {
-        email: {
-          label: "Email",
-          type: "email",
-          placeholder: "email@bookmark.com",
-        },
-        password: {
-          label: "Password",
-          type: "password",
-          placeholder: "password",
-        },
+        email: {},
+        passwd: {},
       },
       async authorize(credentials) {
         console.log("credentials>>", credentials);
@@ -36,19 +29,32 @@ export const {
     }),
   ], // TODO: GET / POST
   callbacks: {
-    async signIn({ user, profile }) {
+    async signIn({ user, profile, account }) {
+      const isCredential = account?.provider === "credentials";
+      console.log("💻 ~ isCredential:", isCredential);
+      console.log("💻 ~ profile:", profile);
+      console.log("💻 ~ user:", user);
+
+      const { email, name: nickname, image } = user;
+      if (!email) return false;
+
       return true;
     },
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
+    async jwt({ token, user, trigger, account, session }) {
+      console.log("💻 ~ account:", account);
+      const userData = trigger === "update" ? session : user;
+      if (userData) {
+        token.id = userData.id;
+        token.email = userData.email;
+        token.name = userData.name || userData.nickname;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
+        session.user.id = token.id?.toString() || "";
+        session.user.name = token.name;
+        session.user.email = token.email as string;
       }
       return session;
     },
@@ -62,5 +68,4 @@ export const {
   session: {
     strategy: "jwt",
   },
-  secret: process.env.AUTH_SECRET as string,
 });

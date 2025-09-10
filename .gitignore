@@ -42,5 +42,9 @@ next-env.d.ts
 
 # MySQL
 /mysql
+
+# prisma
 /lib/generated/prisma
+
+# vscode
 /.vscode
