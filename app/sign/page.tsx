@@ -1,10 +1,7 @@
-import Link from "next/link";
-import LabelInput from "@/components/label-input";
-import { Button } from "@/components/ui/button";
-import { GithubLoginButton } from "./github-login-button";
-import { GoogleLoginButton } from "./google-login-button";
-import { KakaoLoginButton } from "./kakao-login-button";
-import { NaverLoginButton } from "./naver-login-button";
+import { GithubLoginButton } from "./(sign-buttons)/github-login-button";
+import { GoogleLoginButton } from "./(sign-buttons)/google-login-button";
+import { KakaoLoginButton } from "./(sign-buttons)/kakao-login-button";
+import { NaverLoginButton } from "./(sign-buttons)/naver-login-button";
 import SignForm from "./sign-form";
 
 export default function Sign() {
