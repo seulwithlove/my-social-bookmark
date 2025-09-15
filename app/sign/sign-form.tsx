@@ -1,12 +1,15 @@
 "use client";
 
+import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
-import { useReducer } from "react";
+import { useActionState, useReducer } from "react";
+import z from "zod";
 import LabelInput from "@/components/label-input";
 import { Button } from "@/components/ui/button";
+import type { ValidError } from "@/lib/validator";
 
 export default function SignForm() {
-  const [isSignin, toggleSign] = useReducer((pre) => !pre, true);
+  const [isSignin, toggleSign] = useReducer((pre) => !pre, false);
   return (
     <>
       {isSignin ? (
@@ -65,32 +68,73 @@ function SignIn({ toggleSign }: { toggleSign: () => void }) {
 }
 
 function SignUp({ toggleSign }: { toggleSign: () => void }) {
+  const [validError, makeRegist, isPending] = useActionState(
+    async (_preValidError: ValidError | undefined, formData: FormData) => {
+      const validator = z
+        .object({
+          email: z.email(),
+          passwd: z.string().min(6),
+          passwd2: z.string().min(6),
+          nickname: z.string().min(3),
+        })
+        .refine(
+          ({ passwd, passwd2 }) => passwd === passwd2,
+          "Passwords are not matched"
+        )
+        .safeParse(Object.fromEntries(formData.entries()));
+
+      if (!validator.success) {
+        const err = z.treeifyError(validator.error).properties;
+        // console.log("💻 - sign-form.tsx - err:", err);
+        return err;
+      }
+    },
+    undefined
+  );
+
   return (
     <>
-      <form className="flex flex-col gap-3">
+      <form action={makeRegist} className="flex flex-col gap-3">
         <LabelInput
           label="email"
           type="email"
           name="email"
+          error={validError}
           placeholder="email@bookmark.com"
+          // focus={true} // 첫 화면에서의 focus
+        />
+
+        <LabelInput
+          label="password"
+          type="password"
+          name="passwd"
+          error={validError}
+          placeholder="password"
         />
 
         <LabelInput
           label="password confirm"
           type="password"
-          name="password"
-          placeholder="password"
+          name="passwd2"
+          error={validError}
+          placeholder="password confirm"
         />
 
         <LabelInput
           label="nickname"
           type="text"
           name="nickname"
+          error={validError}
           placeholder="your nickname"
         />
 
-        <Button type="submit" variant={"love"} className="w-full">
-          Sign Up
+        <Button
+          disabled={isPending}
+          type="submit"
+          variant={"love"}
+          className="w-full">
+          {isPending ? "Singing Up... " : "Sign Up"}
+          {isPending && <LoaderIcon className="animate-spin" />}
         </Button>
       </form>
       <div className="mt-5 flex gap-5">
