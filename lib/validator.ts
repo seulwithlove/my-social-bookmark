@@ -29,7 +29,6 @@ export const validate = <T extends z.ZodObject>(
       err[prop].value = value;
       // err[prop] = { ...(err[prop] ?? { errors: [] }), value };
     }
-    // console.log("💻 - sign-form.tsx validate - err:", err);
     return [err];
   } else {
     return [undefined, validator.data];

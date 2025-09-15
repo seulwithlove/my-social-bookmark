@@ -40,16 +40,21 @@ export default function LabelInput({
 }: Props & ComponentProps<"input">) {
   const uniqName = useId();
   const inpRef = useRef<HTMLInputElement>(null);
+
   const err = !!error && name && error[name] ? error[name].errors : [];
   const val =
     !!error && name && error[name] ? error[name].value?.toString() : "";
 
   useEffect(() => {
-    console.log("*********");
-    if (!focus || !err.length) return;
+    if (!focus && !err.length) return;
+
+    const keys = Object.keys(error ?? {});
+    // console.log("*********", keys); // check how many times rendered
+    if (!focus && (!err.length || keys[0] !== name)) return;
+
     if (ref) ref.current?.focus();
     else inpRef.current?.focus();
-  }, []);
+  }, [err]);
 
   return (
     <label htmlFor={uniqName} className="font-semibold text-sm capitalize">

@@ -87,10 +87,10 @@ function SignUp({ toggleSign }: { toggleSign: () => void }) {
           label="email"
           type="email"
           name="email"
-          defaultValue={"anfrhrl0313@naver.com"}
+          // defaultValue={"anfrhrl0313@naver.com"}
           error={validError}
           placeholder="email@bookmark.com"
-          // focus={true} // 첫 화면에서의 focus
+          focus={true}
         />
 
         <LabelInput
