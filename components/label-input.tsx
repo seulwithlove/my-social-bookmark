@@ -23,6 +23,7 @@ type Props = {
   error?: ValidError;
   placeholder?: string;
   className?: string;
+  inputClassName?: string;
 };
 
 export default function LabelInput({
@@ -36,6 +37,7 @@ export default function LabelInput({
   error,
   placeholder,
   className,
+  inputClassName,
   ...props
 }: Props & ComponentProps<"input">) {
   const uniqName = useId();
@@ -57,26 +59,28 @@ export default function LabelInput({
   }, [err]);
 
   return (
-    <label htmlFor={uniqName} className="font-semibold text-sm capitalize">
-      {label}
-      <Input
-        type={type || "text"}
-        id={uniqName}
-        name={name || uniqName}
-        ref={ref || inpRef}
-        defaultValue={val || defaultValue}
-        placeholder={placeholder || ""}
-        className={cn(
-          "bg-pink-400 font-normal text-white placeholder:text-gray-300 focus:bg-white",
-          className
-        )}
-        {...props}
-      />
-      {err?.map((e) => (
-        <span key={e} className="text-red-400">
-          {e}
-        </span>
-      ))}
-    </label>
+    <div className={cn(className)}>
+      <label htmlFor={uniqName} className="font-semibold text-sm capitalize">
+        {label}
+        <Input
+          type={type || "text"}
+          id={uniqName}
+          name={name || uniqName}
+          ref={ref || inpRef}
+          defaultValue={val || defaultValue}
+          placeholder={placeholder || ""}
+          className={cn(
+            "bg-pink-400 font-normal text-white placeholder:text-gray-300 focus:bg-white",
+            inputClassName
+          )}
+          {...props}
+        />
+        {err?.map((e) => (
+          <span key={e} className="text-red-400">
+            {e}
+          </span>
+        ))}
+      </label>
+    </div>
   );
 }

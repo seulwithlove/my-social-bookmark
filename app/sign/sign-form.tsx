@@ -56,7 +56,7 @@ function SignIn({ toggleSign }: { toggleSign: () => void }) {
             Remember me
           </label>
 
-          <Link href="#">Forgot password?</Link>
+          <Link href="/forgotpasswd">Forgot password?</Link>
         </div>
 
         <Button
