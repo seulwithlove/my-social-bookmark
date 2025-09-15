@@ -1,8 +1,12 @@
+/** biome-ignore-all lint/performance/noImgElement: img tag */
+/** biome-ignore-all lint/correctness/useJsxKeyInIterable: img tag */
 import { GithubLoginButton } from "./(sign-buttons)/github-login-button";
 import { GoogleLoginButton } from "./(sign-buttons)/google-login-button";
 import { KakaoLoginButton } from "./(sign-buttons)/kakao-login-button";
 import { NaverLoginButton } from "./(sign-buttons)/naver-login-button";
+import { BookImages, MarkImages, PeopleImages } from "./imgaes";
 import SignForm from "./sign-form";
+import SoMany from "./so-many";
 
 export default function Sign() {
   return (
@@ -28,7 +32,24 @@ export default function Sign() {
           <SignForm />
         </div>
 
-        <div className="flex-1 bg-sky-400 p-4 text-white">right</div>
+        <div className="flex flex-1 flex-col justify-around bg-sky-400 p-4 text-white">
+          <div>
+            <h1 className="text-3xl">Social BookMark,</h1>
+            <h2 className="text-3xl">Record than Remember!</h2>
+            <div>
+              Your go-to hub for sharing and discovering great and useful
+              websites. Connect with others, swap your favorite links, and
+              explore a world of useful resources — all powered by this
+              community.
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <SoMany images={BookImages} />
+            <SoMany images={MarkImages} />
+            <SoMany images={PeopleImages} />
+          </div>
+        </div>
       </div>
     </div>
   );
