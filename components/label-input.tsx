@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: useEffect dep-arr */
 "use client";
 
 import {
@@ -18,6 +19,7 @@ type Props = {
   name?: string;
   ref?: RefObject<HTMLInputElement | null>;
   focus?: boolean;
+  defaultValue?: string | number;
   error?: ValidError;
   placeholder?: string;
   className?: string;
@@ -30,6 +32,7 @@ export default function LabelInput({
   name,
   ref,
   focus,
+  defaultValue,
   error,
   placeholder,
   className,
@@ -38,12 +41,15 @@ export default function LabelInput({
   const uniqName = useId();
   const inpRef = useRef<HTMLInputElement>(null);
   const err = !!error && name && error[name] ? error[name].errors : [];
+  const val =
+    !!error && name && error[name] ? error[name].value?.toString() : "";
 
   useEffect(() => {
+    console.log("*********");
     if (!focus || !err.length) return;
     if (ref) ref.current?.focus();
     else inpRef.current?.focus();
-  }, [focus, ref, err]);
+  }, []);
 
   return (
     <label htmlFor={uniqName} className="font-semibold text-sm capitalize">
@@ -53,6 +59,7 @@ export default function LabelInput({
         id={uniqName}
         name={name || uniqName}
         ref={ref || inpRef}
+        defaultValue={val || defaultValue}
         placeholder={placeholder || ""}
         className={cn(
           "bg-pink-400 font-normal text-white placeholder:text-gray-300 focus:bg-white",
@@ -60,7 +67,7 @@ export default function LabelInput({
         )}
         {...props}
       />
-      {err.map((e) => (
+      {err?.map((e) => (
         <span key={e} className="text-red-400">
           {e}
         </span>

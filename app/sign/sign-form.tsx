@@ -3,10 +3,9 @@
 import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
 import { useActionState, useReducer } from "react";
-import z from "zod";
 import LabelInput from "@/components/label-input";
 import { Button } from "@/components/ui/button";
-import type { ValidError } from "@/lib/validator";
+import { authorize, regist } from "./sign.action";
 
 export default function SignForm() {
   const [isSignin, toggleSign] = useReducer((pre) => !pre, false);
@@ -22,13 +21,19 @@ export default function SignForm() {
 }
 
 function SignIn({ toggleSign }: { toggleSign: () => void }) {
+  const [validError, makeLogin, isPending] = useActionState(
+    authorize,
+    undefined
+  );
+
   return (
     <>
-      <form className="flex flex-col gap-3">
+      <form action={makeLogin} className="flex flex-col gap-3">
         <LabelInput
           label="email"
           type="email"
           name="email"
+          error={validError}
           defaultValue={"anfrhrl0313@naver.com"}
           placeholder="email@bookmark.com"
         />
@@ -36,7 +41,8 @@ function SignIn({ toggleSign }: { toggleSign: () => void }) {
         <LabelInput
           label="password"
           type="password"
-          name="password"
+          name="passwd"
+          error={validError}
           defaultValue={""}
           placeholder="password"
         />
@@ -53,8 +59,12 @@ function SignIn({ toggleSign }: { toggleSign: () => void }) {
           <Link href="#">Forgot password?</Link>
         </div>
 
-        <Button type="submit" variant={"love"} className="w-full">
-          Login
+        <Button
+          disabled={isPending}
+          type="submit"
+          variant={"love"}
+          className="w-full">
+          {isPending ? "Signing..." : "Sign In"}
         </Button>
       </form>
       <div className="mt-5 flex gap-5">
@@ -68,29 +78,7 @@ function SignIn({ toggleSign }: { toggleSign: () => void }) {
 }
 
 function SignUp({ toggleSign }: { toggleSign: () => void }) {
-  const [validError, makeRegist, isPending] = useActionState(
-    async (_preValidError: ValidError | undefined, formData: FormData) => {
-      const validator = z
-        .object({
-          email: z.email(),
-          passwd: z.string().min(6),
-          passwd2: z.string().min(6),
-          nickname: z.string().min(3),
-        })
-        .refine(
-          ({ passwd, passwd2 }) => passwd === passwd2,
-          "Passwords are not matched"
-        )
-        .safeParse(Object.fromEntries(formData.entries()));
-
-      if (!validator.success) {
-        const err = z.treeifyError(validator.error).properties;
-        // console.log("💻 - sign-form.tsx - err:", err);
-        return err;
-      }
-    },
-    undefined
-  );
+  const [validError, makeRegist, isPending] = useActionState(regist, undefined);
 
   return (
     <>
@@ -99,6 +87,7 @@ function SignUp({ toggleSign }: { toggleSign: () => void }) {
           label="email"
           type="email"
           name="email"
+          defaultValue={"anfrhrl0313@naver.com"}
           error={validError}
           placeholder="email@bookmark.com"
           // focus={true} // 첫 화면에서의 focus
