@@ -37,7 +37,7 @@ export const sendRegistCheck = async (to: string, authKey: string) => {
 export const sendPasswordReset = async (
   to: string,
   authKey: string,
-  nickname?: string
+  nickname?: string,
 ) => {
   const subject = "[Bookmark] Reset Password";
   const html = `
@@ -47,7 +47,7 @@ export const sendPasswordReset = async (
       <h3 style="margin: 10px 0;">
         Click the link below to reset your password.
       </h3>
-      <a href="${process.env.NEXT_PUBLIC_URL}/passwdcheck/${authKey}">Reset Password</a>
+      <a href="${process.env.NEXT_PUBLIC_URL}/forgotpasswd/${authKey}">Reset Password</a>
     </div>
   `;
 
@@ -58,7 +58,7 @@ const sendMail = async (
   to: string,
   subject: string,
   html: string,
-  attachments?: Attachments
+  attachments?: Attachments,
 ) => {
   TRANS.sendMail({
     from: FROM,
