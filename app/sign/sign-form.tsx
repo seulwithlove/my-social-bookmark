@@ -23,7 +23,7 @@ export default function SignForm() {
 function SignIn({ toggleSign }: { toggleSign: () => void }) {
   const [validError, makeLogin, isPending] = useActionState(
     authorize,
-    undefined
+    undefined,
   );
 
   return (
@@ -63,7 +63,8 @@ function SignIn({ toggleSign }: { toggleSign: () => void }) {
           disabled={isPending}
           type="submit"
           variant={"love"}
-          className="w-full">
+          className="w-full"
+        >
           {isPending ? "Signing..." : "Sign In"}
         </Button>
       </form>
@@ -77,6 +78,13 @@ function SignIn({ toggleSign }: { toggleSign: () => void }) {
   );
 }
 
+const dummy = {
+  email: "love.and.seul@gmail.com",
+  passwd: "121212",
+  passwd2: "121211",
+  nickname: "안녕안녕",
+};
+
 function SignUp({ toggleSign }: { toggleSign: () => void }) {
   const [validError, makeRegist, isPending] = useActionState(regist, undefined);
 
@@ -87,16 +95,26 @@ function SignUp({ toggleSign }: { toggleSign: () => void }) {
           label="email"
           type="email"
           name="email"
-          // defaultValue={"anfrhrl0313@naver.com"}
+          defaultValue={dummy.email}
           error={validError}
           placeholder="email@bookmark.com"
           focus={true}
         />
 
         <LabelInput
+          label="nickname"
+          type="text"
+          name="nickname"
+          defaultValue={dummy.nickname}
+          error={validError}
+          placeholder="your nickname"
+        />
+
+        <LabelInput
           label="password"
           type="password"
           name="passwd"
+          defaultValue={dummy.passwd}
           error={validError}
           placeholder="password"
         />
@@ -105,23 +123,17 @@ function SignUp({ toggleSign }: { toggleSign: () => void }) {
           label="password confirm"
           type="password"
           name="passwd2"
+          defaultValue={dummy.passwd2}
           error={validError}
           placeholder="password confirm"
-        />
-
-        <LabelInput
-          label="nickname"
-          type="text"
-          name="nickname"
-          error={validError}
-          placeholder="your nickname"
         />
 
         <Button
           disabled={isPending}
           type="submit"
           variant={"love"}
-          className="w-full">
+          className="w-full"
+        >
           {isPending ? "Singing Up... " : "Sign Up"}
           {isPending && <LoaderIcon className="animate-spin" />}
         </Button>
