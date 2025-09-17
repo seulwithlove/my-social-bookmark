@@ -53,12 +53,15 @@ export const {
       const mbr = await findMemberByEmail(email, isCredential);
       console.log("💻 - auth.ts - mbr:", mbr);
 
+      //TODO: resend emailcheck! => when user delete email by accident
       if (mbr?.emailcheck) {
-        return `/sign/error?error=CheckEmail&email=${email}`;
+        return `/sign/error?error=CheckEmail&email=${email}&oldEmailcheck=${mbr.emailcheck}`;
       }
 
       if (isCredential) {
-        if (!mbr) throw new AuthError("NotExistsMember");
+        if (!mbr) throw authError("Not Exists Member!", "EmailSignInError");
+        if (mbr.outdt) throw authError("Withdrawed Member!", "AccessDenied");
+        if (!mbr.passwd) return `/sign/error?error=RegistedBySNS`;
       } else {
         if (!mbr && nickname) {
           await prisma.member.create({
@@ -99,3 +102,9 @@ export const {
     strategy: "jwt",
   },
 });
+
+function authError(message: string, type: AuthError["type"]) {
+  const authError = new AuthError(message);
+  authError.type = type as typeof authError.type;
+  return authError;
+}
