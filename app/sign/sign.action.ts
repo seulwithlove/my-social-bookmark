@@ -28,11 +28,12 @@ export const authorize = async (
     passwd: z.string().min(6, "More than 6 characters!"),
   });
 
-  const [err] = validate(zobj, formData);
+  const [err, data] = validate(zobj, formData);
   if (err) return err;
 
   try {
-    await signIn("credentials", formData);
+    // await signIn("credentials", formData);
+    await signIn("credentials", { ...data, redirectTo: "/bookcase" });
   } catch (error) {
     console.log("💻 - sign.action.ts - error:", error);
     throw error;
@@ -72,14 +73,9 @@ export const regist = async (
   const passwd = await hash(orgPasswd, 10);
   const emailcheck = newToken();
 
-  try {
-    await prisma.member.create({
-      data: { email, nickname, passwd, emailcheck },
-    });
-  } catch (error) {
-    if (error instanceof Error) throw error;
-    console.log("💻 - sign.action.ts - error:", error);
-  }
+  await prisma.member.create({
+    data: { email, nickname, passwd, emailcheck },
+  });
 
   await sendRegistCheck(email, emailcheck);
 
