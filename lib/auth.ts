@@ -1,4 +1,4 @@
-import NextAuth, { AuthError, type User } from "next-auth";
+import NextAuth, { AuthError } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
@@ -7,6 +7,7 @@ import Naver from "next-auth/providers/naver";
 import z from "zod";
 import { findMemberByEmail } from "@/app/sign/sign.action";
 import prisma from "./db";
+import { validateObject } from "./validator";
 
 export const {
   handlers: { GET, POST },
@@ -26,20 +27,16 @@ export const {
         passwd: {},
       },
       async authorize(credentials) {
-        // console.log("credentials>>", credentials);
-        const { email, passwd } = credentials;
-        const validator = z
-          .object({
-            email: z.email("Wrong email address!"),
-            passwd: z.string().min(6, "More than 6 characters!"),
-          })
-          .safeParse({ email, passwd });
+        console.log("credentials>>", credentials);
+        const zobj = z.object({
+          email: z.email("Wrong email address!"),
+          passwd: z.string().min(6, "More than 6 characters!"),
+        });
 
-        if (!validator.success) {
-          console.log("Error:", validator.error);
-          throw new AuthError(validator.error.message);
-        }
-        return { email, passwd } as User;
+        const [err, data] = validateObject(zobj, credentials);
+        if (err) return err;
+
+        return data;
       },
     }),
   ], // TODO: GET / POST
