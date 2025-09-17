@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/performance/noImgElement: img tag */
 /** biome-ignore-all lint/correctness/useJsxKeyInIterable: img tag */
+import { use } from "react";
 import { GithubLoginButton } from "./(sign-buttons)/github-login-button";
 import { GoogleLoginButton } from "./(sign-buttons)/google-login-button";
 import { KakaoLoginButton } from "./(sign-buttons)/kakao-login-button";
@@ -8,7 +9,11 @@ import { BookImages, MarkImages, PeopleImages } from "./imgaes";
 import SignForm from "./sign-form";
 import SoMany from "./so-many";
 
-export default function Sign() {
+type Props = {
+  searchParams: Promise<{ redirectTo: string | null }>;
+};
+export default function Sign({ searchParams }: Props) {
+  const { redirectTo } = use(searchParams);
   return (
     <div className="grid h-full place-items-center px-6">
       <div className="flex w-full overflow-hidden rounded-md border shadow-md">
@@ -22,9 +27,10 @@ export default function Sign() {
             <GoogleLoginButton />
             <GithubLoginButton />
             <NaverLoginButton />
-            <KakaoLoginButton />
+            <KakaoLoginButton redirectTo={redirectTo} />
           </div>
 
+          {/* middle line */}
           <div className='relative text-center text-gray-200 before:absolute before:top-[50%] before:left-0 before:h-[1px] before:w-[45%] before:bg-gray-200 before:content-[""] after:absolute after:top-[50%] after:right-0 after:h-[1px] after:w-[45%] after:bg-gray-200 after:content-[""]'>
             or
           </div>

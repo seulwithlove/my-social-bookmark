@@ -24,12 +24,19 @@ export default function SignForm() {
 function SignIn({ toggleSign }: { toggleSign: () => void }) {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
+  const redirectTo = searchParams.get("redirectTo");
 
   const passwdRef = useRef<HTMLInputElement>(null);
+
   const [validError, makeLogin, isPending] = useActionState(
     authorize,
     undefined,
   );
+
+  // const makeLoginAction = (formData: FormData) => {
+  //   if (redirectTo) formData.set("redirectTo", redirectTo);
+  //   makeLogin(formData);
+  // };
 
   useEffect(() => {
     if (email) {
@@ -40,7 +47,11 @@ function SignIn({ toggleSign }: { toggleSign: () => void }) {
   return (
     <>
       <form action={makeLogin} className="flex flex-col gap-3">
+        {redirectTo && (
+          <input type="hidden" name="redirectTo" value={redirectTo} />
+        )}
         <LabelInput
+          className="text-input"
           label="email"
           type="email"
           name="email"
@@ -51,6 +62,7 @@ function SignIn({ toggleSign }: { toggleSign: () => void }) {
         />
 
         <LabelInput
+          className="text-input"
           label="password"
           type="password"
           name="passwd"
