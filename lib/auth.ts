@@ -54,6 +54,7 @@ export const {
       if (!email) return false;
 
       const mbr = await findMemberByEmail(email, isCredential);
+      console.log("💻 - auth.ts - mbr:", mbr);
 
       if (mbr?.emailcheck) {
         return `/sign/error?error=CheckEmail&email=${email}`;
