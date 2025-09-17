@@ -10,15 +10,15 @@ import { validate } from "@/lib/validator";
 import type { ValidError } from "./../../lib/validator";
 import { sendRegistCheck } from "./mail.action";
 
-type Provider = "google" | "github" | "naver" | "kakao";
+export type Provider = "google" | "github" | "naver" | "kakao";
 
-export const login = async (provider: Provider, callback?: string) => {
+export const login = async (provider: Provider, callback?: string | null) => {
   await signIn(provider, { redirectTo: callback || "/bookcase" });
 };
 
 export const loginNaver = async () => login("naver");
 
-// creential login(email, passwd)
+// credential login(email, passwd)
 export const authorize = async (
   _preValidError: ValidError | undefined,
   formData: FormData,
@@ -32,10 +32,11 @@ export const authorize = async (
   if (err) return err;
 
   try {
-    // await signIn("credentials", formData);
-    await signIn("credentials", { ...data, redirectTo: "/bookcase" });
+    const redirectTo = formData.get("redirectTo")?.toString() || "/bookcase";
+    await signIn("credentials", { ...data, redirectTo });
   } catch (error) {
-    console.log("💻 - sign.action.ts - error:", error);
+    if (error instanceof Error && error.message !== "NEXT_REDIRECT")
+      console.log("💻 - sign.action.ts - error:", error);
     throw error;
   }
 };

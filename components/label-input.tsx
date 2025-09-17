@@ -70,7 +70,7 @@ export default function LabelInput({
           defaultValue={val || defaultValue}
           placeholder={placeholder || ""}
           className={cn(
-            "bg-pink-400 font-normal text-white placeholder:text-gray-300 focus:bg-white",
+            "bg-pink-400 font-normal text-gray-600 placeholder:text-gray-300 focus:bg-white",
             inputClassName
           )}
           {...props}
