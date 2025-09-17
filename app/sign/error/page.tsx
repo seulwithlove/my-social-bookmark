@@ -15,11 +15,15 @@ export default function AuthError({ searchParams }: Props) {
 
   return (
     <div className="grid h-full place-items-center">
-      <div>
-        <h1 className="mb-5 font-semibold text-2xl">Sign error</h1>
+      <div className="text-center">
+        <h1 className="mb-5 font-semibold text-2xl">Sign error Occured!</h1>
         <div className="text-red-500">{getMessage(error)}</div>
 
-        <Link href="/sign">Go to Login</Link>
+        <div>
+          <Link href={`/sign?email=${email}`} className="w-full">
+            Go to Login
+          </Link>
+        </div>
       </div>
     </div>
   );
