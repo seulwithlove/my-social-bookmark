@@ -1,6 +1,6 @@
 services:
   localdb:
-    container_name: sbmdb
+    container_name: mysbmdb
     image: mysql:8.0
     ports:
       - 3310:3306
@@ -8,7 +8,7 @@ services:
       - 3310
     environment:
       MYSQL_ROOT_PASSWORD: TestdbRoot
-      MYSQL_DATABASE: sbmdb
+      MYSQL_DATABASE: mysbmdb
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
@@ -16,4 +16,8 @@ services:
       - --default-time-zone=Asia/Seoul
 
     volumes:
-      - ./mysql:/var/lib/mysql
+      # - ./mysql:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
