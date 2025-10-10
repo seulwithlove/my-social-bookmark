@@ -30,6 +30,9 @@
       },
       "a11y": {
         "useButtonType": "off"
+      },
+      "style": {
+        "useNodejsImportProtocol": "off"
       }
     },
     "domains": {
@@ -40,7 +43,7 @@
   "assist": {
     "actions": {
       "source": {
-        "organizeImports": "on"
+        "organizeImports": "off"
       }
     }
   }
