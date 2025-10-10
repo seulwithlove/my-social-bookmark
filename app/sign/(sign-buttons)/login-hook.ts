@@ -1,5 +1,5 @@
 import { useSearchParams } from "next/navigation";
-import { login, type Provider } from "./sign.action";
+import { login, type Provider } from "../sign.action";
 
 export function useLogin() {
   const searchParams = useSearchParams();

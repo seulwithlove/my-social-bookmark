@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useLogin } from "../login-hooks";
+import { useLogin } from "./login-hook";
 
 export function GithubLoginButton() {
   const makeLogin = useLogin();
