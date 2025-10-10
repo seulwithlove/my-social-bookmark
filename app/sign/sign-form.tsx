@@ -1,11 +1,11 @@
 "use client";
 
+import LabelInput from "@/components/label-input";
+import { Button } from "@/components/ui/button";
 import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useActionState, useEffect, useReducer, useRef } from "react";
-import LabelInput from "@/components/label-input";
-import { Button } from "@/components/ui/button";
 import { authorize, regist } from "./sign.action";
 
 export default function SignForm() {
@@ -87,7 +87,7 @@ function SignIn({ toggleSign }: { toggleSign: () => void }) {
           disabled={isPending}
           type="submit"
           variant={"love"}
-          className="w-full"
+          className="w-full cursor-pointer"
         >
           {isPending ? "Signing..." : "Sign In"}
         </Button>
@@ -156,7 +156,7 @@ function SignUp({ toggleSign }: { toggleSign: () => void }) {
           disabled={isPending}
           type="submit"
           variant={"love"}
-          className="w-full"
+          className="w-full cursor-pointer"
         >
           {isPending ? "Singing Up... " : "Sign Up"}
           {isPending && <LoaderIcon className="animate-spin" />}
