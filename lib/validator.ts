@@ -16,8 +16,13 @@ export type ValidError = Record<
 export const validate = <T extends z.ZodObject>(
   zobj: T,
   formData: FormData,
+): [ValidError] | [undefined, z.core.output<T>] =>
+  validateObject(zobj, Object.fromEntries(formData.entries()));
+
+export const validateObject = <T extends z.ZodObject>(
+  zobj: T,
+  ent: Record<string, FormDataEntryValue | string | unknown>,
 ): [ValidError] | [undefined, z.core.output<T>] => {
-  const ent = Object.fromEntries(formData.entries());
   const validator = zobj.safeParse(ent);
 
   if (!validator.success) {
@@ -26,7 +31,7 @@ export const validate = <T extends z.ZodObject>(
     for (const [prop, value] of Object.entries(ent)) {
       if (prop.startsWith("$")) continue;
       if (!err[prop]) err[prop] = { errors: [] };
-      err[prop].value = value;
+      err[prop].value = value as string;
       // err[prop] = { ...(err[prop] ?? { errors: [] }), value };
     }
     return [err];
