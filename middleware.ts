@@ -18,9 +18,9 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  runtime: "nodejs",
+  // runtime: "nodejs",
   matcher: [
-    "/((?!sign|_next/static|_next/image|api/auth|forgotpasswd|registcheck|favicon.ico|robots.tsx|.well-known|$).*)",
+    "/((?!sign|_next/static|_next/image|api/auth|api/sendmail|forgotpasswd|registcheck|favicon.ico|robots.tsx|.well-known|$).*)",
     // "/api/:path*",
   ],
 };

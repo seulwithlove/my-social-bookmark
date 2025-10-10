@@ -66,8 +66,9 @@ export const authorize = async (
       return {
         email: { errors: [typeErr], value: data.email },
         passwd: { errors: [], valude: data.passwd },
-      };
+      } as ValidError;
     }
+    throw error;
   }
 };
 
@@ -110,8 +111,10 @@ export const regist = async (
   await prisma.member.create({
     data: { email, nickname, passwd, emailcheck },
   });
+
   // 4. Send email notification
-  await sendRegistCheck(email, emailcheck);
+  // await sendRegistCheck(email, emailcheck);
+  sendmailByFetch({ email, emailcheck });
 
   // 5. Redirect
   redirect(`/sign/error?error=CheckEmail&email=${email}`);

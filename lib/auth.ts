@@ -1,3 +1,4 @@
+import { findMemberByEmail } from "@/app/sign/sign.action";
 import NextAuth, { AuthError } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Github from "next-auth/providers/github";
@@ -5,7 +6,6 @@ import Google from "next-auth/providers/google";
 import Kakao from "next-auth/providers/kakao";
 import Naver from "next-auth/providers/naver";
 import z from "zod";
-import { findMemberByEmail } from "@/app/sign/sign.action";
 import prisma from "./db";
 import { validateObject } from "./validator";
 
@@ -55,7 +55,7 @@ export const {
 
       //TODO: resend emailcheck! => when user delete email by accident
       if (mbr?.emailcheck) {
-        return `/sign/error?error=CheckEmail&email=${email}&oldEmailcheck=${mbr.emailcheck}`;
+        return `/sign/error?error=CheckEmail&email=${email}&emailcheck=${mbr.emailcheck}`;
       }
 
       if (isCredential) {
@@ -80,6 +80,13 @@ export const {
         token.name = userData.name || userData.nickname;
         token.image = userData.image;
         token.isadmin = userData.isadmin;
+
+        if (account) {
+          token.acessToken = account?.access_token;
+          token.accessTokenExpires =
+            Date.now() + (account.expires_in ?? 0) * 1000; // 서버에 요청할때마다 새로 요청
+          token.refreshToken = account.refresh_token;
+        }
       }
       return token;
     },
