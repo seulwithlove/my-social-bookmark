@@ -78,6 +78,8 @@ export const {
         token.id = userData.id;
         token.email = userData.email;
         token.name = userData.name || userData.nickname;
+        token.image = userData.image;
+        token.isadmin = userData.isadmin;
       }
       return token;
     },
@@ -87,6 +89,8 @@ export const {
         session.user.id = token.id?.toString() || "";
         session.user.name = token.name;
         session.user.email = token.email as string;
+        session.user.image = token.image as string;
+        session.user.isadmin = token.isadmin;
       }
       return session;
     },

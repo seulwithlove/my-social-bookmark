@@ -21,14 +21,14 @@ export const validate = <T extends z.ZodObject>(
 
 export const validateObject = <T extends z.ZodObject>(
   zobj: T,
-  ent: Record<string, FormDataEntryValue | string | unknown>,
+  obj: Record<string, FormDataEntryValue | string | unknown>,
 ): [ValidError] | [undefined, z.core.output<T>] => {
-  const validator = zobj.safeParse(ent);
+  const validator = zobj.safeParse(obj);
 
   if (!validator.success) {
     const err = z.treeifyError(validator.error).properties as ValidError;
 
-    for (const [prop, value] of Object.entries(ent)) {
+    for (const [prop, value] of Object.entries(obj)) {
       if (prop.startsWith("$")) continue;
       if (!err[prop]) err[prop] = { errors: [] };
       err[prop].value = value as string;

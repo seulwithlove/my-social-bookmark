@@ -12,6 +12,7 @@ import SoMany from "./so-many";
 type Props = {
   searchParams: Promise<{ redirectTo: string | null }>;
 };
+
 export default function Sign({ searchParams }: Props) {
   const { redirectTo } = use(searchParams);
   return (
@@ -26,7 +27,7 @@ export default function Sign({ searchParams }: Props) {
           <div className="mt-5 mb-2 grid grid-cols-2 gap-3">
             <GoogleLoginButton />
             <GithubLoginButton />
-            <NaverLoginButton />
+            <NaverLoginButton redirectTo={redirectTo} />
             <KakaoLoginButton redirectTo={redirectTo} />
           </div>
 

@@ -1,12 +1,13 @@
 "use server";
 
-import { hash } from "bcryptjs";
-import { redirect } from "next/navigation";
-import z from "zod";
 import { signIn, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { newToken } from "@/lib/utils";
 import { validate } from "@/lib/validator";
+import { hash } from "bcryptjs";
+import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
+import z from "zod";
 import type { ValidError } from "./../../lib/validator";
 import { sendRegistCheck } from "./mail.action";
 
@@ -16,7 +17,8 @@ export const login = async (provider: Provider, callback?: string | null) => {
   await signIn(provider, { redirectTo: callback || "/bookcase" });
 };
 
-export const loginNaver = async () => login("naver");
+export const loginNaver = async (redirectTo?: string | null) =>
+  await login("naver", redirectTo);
 
 // credential login(email, passwd)
 export const authorize = async (
@@ -29,15 +31,43 @@ export const authorize = async (
   });
 
   const [err, data] = validate(zobj, formData);
-  if (err) return err;
+  if (err) {
+    console.log("💻 - sign.action.ts - err:", err);
+    return err;
+  }
 
   try {
     const redirectTo = formData.get("redirectTo")?.toString() || "/bookcase";
     await signIn("credentials", { ...data, redirectTo });
   } catch (error) {
-    if (error instanceof Error && error.message !== "NEXT_REDIRECT")
-      console.log("💻 - sign.action.ts - error:", error);
-    throw error;
+    if (error instanceof AuthError) {
+      switch (error.type) {
+      }
+    }
+    console.log("💻 - sign.action.ts - error:", error);
+    if (error instanceof AuthError) {
+      let typeErr: string;
+      switch (error.type) {
+        case "AccessDenied":
+        case "EmailSignInError":
+          typeErr = error.message.split(". Read more")[0];
+          break;
+        case "OAuthAccountNotLinked":
+          typeErr = `Already registed with SNS Account`;
+          break;
+        case "CredentialsSignin":
+          typeErr =
+            error.message.split(". Read more")[0] ||
+            "Not matched Email or Password!";
+          break;
+        default:
+          typeErr = error.message || "Something went wrong!";
+      }
+      return {
+        email: { errors: [typeErr], value: data.email },
+        passwd: { errors: [], valude: data.passwd },
+      };
+    }
   }
 };
 
@@ -49,6 +79,7 @@ export const regist = async (
   _preValidError: ValidError | undefined,
   formData: FormData,
 ) => {
+  // 1. Define Zod schema
   const zobj = z
     .object({
       email: z.email(),
@@ -61,9 +92,11 @@ export const regist = async (
       message: "Passwords are not matched",
     });
 
+  // 2. Validate
   const [err, data] = validate(zobj, formData);
   if (err) return err;
 
+  // 3. Process data
   const { email, nickname, passwd: orgPasswd } = data;
   const mbr = await findMemberByEmail(email);
   if (mbr)
@@ -77,9 +110,10 @@ export const regist = async (
   await prisma.member.create({
     data: { email, nickname, passwd, emailcheck },
   });
-
+  // 4. Send email notification
   await sendRegistCheck(email, emailcheck);
 
+  // 5. Redirect
   redirect(`/sign/error?error=CheckEmail&email=${email}`);
 };
 
@@ -93,6 +127,7 @@ export const findMemberByEmail = async (
       nickname: true,
       emailcheck: true,
       isadmin: true,
+      outdt: true,
       passwd,
     },
     where: { email },

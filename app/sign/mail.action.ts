@@ -31,7 +31,7 @@ export const sendRegistCheck = async (to: string, authKey: string) => {
     </div>
   `;
 
-  sendMail(to, subject, html);
+  return sendMail(to, subject, html);
 };
 
 export const sendPasswordReset = async (
@@ -51,7 +51,7 @@ export const sendPasswordReset = async (
     </div>
   `;
 
-  sendMail(to, subject, html);
+  return sendMail(to, subject, html);
 };
 
 const sendMail = async (
