@@ -1,4 +1,5 @@
 import { findMemberByEmail } from "@/app/sign/sign.action";
+import { compare } from "bcryptjs";
 import NextAuth, { AuthError } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Github from "next-auth/providers/github";
@@ -39,7 +40,7 @@ export const {
         return data;
       },
     }),
-  ], // TODO: GET / POST
+  ],
   callbacks: {
     async signIn({ user, profile, account }) {
       const isCredential = account?.provider === "credentials";
@@ -50,7 +51,7 @@ export const {
       const { email, name: nickname, image } = user;
       if (!email) return false;
 
-      const mbr = await findMemberByEmail(email, isCredential);
+      let mbr = await findMemberByEmail(email, isCredential);
       console.log("💻 - auth.ts - mbr:", mbr);
 
       //TODO: resend emailcheck! => when user delete email by accident
@@ -61,14 +62,24 @@ export const {
       if (isCredential) {
         if (!mbr) throw authError("Not Exists Member!", "EmailSignInError");
         if (mbr.outdt) throw authError("Withdrawed Member!", "AccessDenied");
-        if (!mbr.passwd) return `/sign/error?error=RegistedBySNS`;
+        if (!mbr.passwd)
+          throw authError("RegistedBySNS", "OAuthAccountNotLinked");
+
+        const isValidPasswd = await compare(user.passwd ?? "", mbr.passwd);
+        if (!isValidPasswd)
+          throw authError("Invalid Password!", "CredentialsSignin");
       } else {
-        if (!mbr && nickname) {
-          await prisma.member.create({
-            data: { email, nickname, image },
+        if (!mbr) {
+          mbr = await prisma.member.create({
+            data: { email, nickname: nickname || "guest", image },
           });
         }
       }
+      user.id = String(mbr.id);
+      user.name = mbr.nickname;
+      if (mbr.image) user.image = mbr.image;
+      user.isadmin = mbr.isadmin;
+
       return true;
     },
     async jwt({ token, user, trigger, account, session }) {

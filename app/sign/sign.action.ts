@@ -148,6 +148,36 @@ export const sendResetPassword = async (
   redirect(`/sign/error?error=CheckEmail&email=${email}`);
 };
 
+export const resetPassword = async (
+  _: ValidError | undefined,
+  formData: FormData,
+) => {
+  const zobj = z
+    .object({
+      email: z.email(),
+      emailcheck: z.uuidv4(),
+      passwd: z.string().min(6),
+      passwd2: z.string().min(6),
+    })
+    .refine(({ passwd, passwd2 }) => passwd === passwd2, {
+      path: ["passwd2"],
+      message: "Not Match Password! Confirm Password!",
+    });
+
+  const [err, data] = validate(zobj, formData);
+
+  if (err) return err;
+
+  const { email, passwd2, emailcheck } = data;
+  const passwd = await hash(passwd2, 10);
+  await prisma.member.update({
+    where: { email, emailcheck },
+    data: { passwd, emailcheck: null },
+  });
+
+  redirect(`/sign/error?error=Your Password Changed.`);
+};
+
 export const resendRegist = async (
   _: ValidError | undefined,
   formData: FormData,
@@ -165,15 +195,15 @@ export const resendRegist = async (
     redirect("/sign/error?error=EmailSendFail");
   }
 
-  const newEamilCheck = newToken();
+  const newEmailCheck = newToken();
   await prisma.member.update({
     where: { email },
-    data: { emailcheck: newEamilCheck },
+    data: { emailcheck: newEmailCheck },
   });
 
   const rs = await sendmailByFetch({
     email,
-    emailcheck: newEamilCheck,
+    emailcheck: newEmailCheck,
   });
 
   if (!rs.ok) return { email: { errors: ["Fail to send email"] } };
@@ -181,23 +211,7 @@ export const resendRegist = async (
   redirect(`/sign/error?error=CheckEmail&email=${email}`);
 };
 
-export const findMemberByEmail = async (
-  email: string,
-  passwd: boolean = false,
-) =>
-  prisma.member.findUnique({
-    select: {
-      id: true,
-      nickname: true,
-      emailcheck: true,
-      isadmin: true,
-      outdt: true,
-      passwd,
-    },
-    where: { email },
-  });
-
-const sendmailByFetch = async ({
+export const sendmailByFetch = async ({
   email,
   emailcheck,
   nickname,
@@ -212,3 +226,20 @@ const sendmailByFetch = async ({
     body: JSON.stringify({ email, emailcheck, nickname, emailType }),
   });
 };
+
+export const findMemberByEmail = async (
+  email: string,
+  passwd: boolean = false,
+) =>
+  prisma.member.findUnique({
+    select: {
+      id: true,
+      nickname: true,
+      emailcheck: true,
+      image: true,
+      isadmin: true,
+      outdt: true,
+      passwd,
+    },
+    where: { email },
+  });
